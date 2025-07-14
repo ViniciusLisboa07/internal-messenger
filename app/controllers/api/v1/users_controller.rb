@@ -1,6 +1,6 @@
 class Api::V1::UsersController < ApplicationController
   before_action :authenticate_user!
-  before_action :require_admin!, except: [:show, :update]
+  before_action :require_admin!, except: [:show, :update, :index]
   before_action :set_user, only: [:show, :update, :destroy, :activate, :deactivate, :invalidate_tokens]
   before_action :check_user_access, only: [:show, :update]
 
