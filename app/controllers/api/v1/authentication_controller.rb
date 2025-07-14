@@ -6,7 +6,7 @@ class Api::V1::AuthenticationController < ApplicationController
     
     if user && user.valid_password?(params[:password])
       if user.active?
-        token = user.generate_jwt_token
+        token = user.refresh_token!
         render_success(
           {
             token: token,
@@ -29,20 +29,22 @@ class Api::V1::AuthenticationController < ApplicationController
   end
 
   def refresh_token
-    token = current_user.generate_jwt_token
+    token = current_user.refresh_token!
     render_success(
       {
         token: token,
         user: current_user.as_json_response
       },
-      'Token refreshed successfully'
+      'Token refreshed successfully. All previous tokens are now invalid.'
     )
   end
 
   def logout
-    # For JWT, we don't need to do anything server-side
-    # The client should just discard the token
-    render_success({}, 'Successfully logged out')
+    current_user.invalidate_all_tokens!
+    render_success(
+      {},
+      'Successfully logged out. All tokens have been invalidated.'
+    )
   end
 
   def profile

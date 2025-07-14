@@ -15,6 +15,7 @@ Rails.application.routes.draw do
         member do
           patch :activate
           patch :deactivate
+          patch :invalidate_tokens
         end
       end
     end

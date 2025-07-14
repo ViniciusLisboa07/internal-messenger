@@ -5,10 +5,21 @@ class ApplicationController < ActionController::API
 
   def authenticate_user!
     token = extract_token_from_header
-    return render_unauthorized unless token
+    return render_unauthorized('No authorization token provided') unless token
+
+    unless JwtConfig.valid_token?(token)
+      return render_unauthorized('Invalid token format')
+    end
 
     @current_user = JwtConfig.user_from_token(token)
-    return render_unauthorized unless @current_user&.active?
+    
+    if @current_user.nil?
+      return render_unauthorized('Token is invalid or has been revoked')
+    end
+    
+    unless @current_user.active?
+      return render_unauthorized('Account is inactive')
+    end
   end
 
   def extract_token_from_header
@@ -28,10 +39,10 @@ class ApplicationController < ActionController::API
     end
   end
 
-  def render_unauthorized
+  def render_unauthorized(message = 'Unauthorized')
     render json: {
       success: false,
-      error: 'Unauthorized'
+      error: message
     }, status: :unauthorized
   end
 

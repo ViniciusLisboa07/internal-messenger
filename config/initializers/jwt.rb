@@ -27,11 +27,20 @@ module JwtConfig
   end
 
   def self.user_from_token(token)
-    decoded = decode(token)
-    return nil unless decoded
-    
-    User.find(decoded['user_id'])
-  rescue ActiveRecord::RecordNotFound
+    User.decode_jwt_token(token)
+  rescue
     nil
+  end
+
+  def self.valid_token?(token)
+    return false unless token
+    
+    decoded = decode(token)
+    return false unless decoded
+    
+    required_fields = ['user_id', 'token_version', 'exp']
+    required_fields.all? { |field| decoded.key?(field) }
+  rescue
+    false
   end
 end 

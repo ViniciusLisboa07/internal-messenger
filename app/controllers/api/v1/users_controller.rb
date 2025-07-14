@@ -1,7 +1,7 @@
 class Api::V1::UsersController < ApplicationController
   before_action :authenticate_user!
   before_action :require_admin!, except: [:show, :update]
-  before_action :set_user, only: [:show, :update, :destroy, :activate, :deactivate]
+  before_action :set_user, only: [:show, :update, :destroy, :activate, :deactivate, :invalidate_tokens]
   before_action :check_user_access, only: [:show, :update]
 
   def index
@@ -71,11 +71,22 @@ class Api::V1::UsersController < ApplicationController
 
   def deactivate
     @user.update(active: false)
+    @user.invalidate_all_tokens!
     render_success(
       {
         user: @user.as_json_response
       },
-      'User deactivated successfully'
+      'User deactivated successfully. All user tokens have been invalidated.'
+    )
+  end
+
+  def invalidate_tokens
+    @user.invalidate_all_tokens!
+    render_success(
+      {
+        user: @user.as_json_response
+      },
+      'All tokens for this user have been invalidated. User will need to login again.'
     )
   end
 

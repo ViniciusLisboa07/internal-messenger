@@ -8,6 +8,7 @@ class User < ApplicationRecord
   validates :email, presence: true, uniqueness: { case_sensitive: false }
   validates :role, inclusion: { in: %w[admin employee] }
   validates :active, inclusion: { in: [true, false] }
+  validates :token_version, presence: true, numericality: { greater_than_or_equal_to: 0 }
 
   enum role: { employee: 'employee', admin: 'admin' }
 
@@ -38,6 +39,7 @@ class User < ApplicationRecord
       email: email,
       name: name,
       role: role,
+      token_version: token_version,
       exp: 24.hours.from_now.to_i
     }
     JWT.encode(payload, Rails.application.credentials.secret_key_base)
@@ -45,9 +47,24 @@ class User < ApplicationRecord
 
   def self.decode_jwt_token(token)
     decoded_token = JWT.decode(token, Rails.application.credentials.secret_key_base)[0]
-    User.find(decoded_token['user_id'])
+    user = User.find(decoded_token['user_id'])
+    
+    if user && user.token_version == decoded_token['token_version']
+      user
+    else
+      nil
+    end
   rescue JWT::DecodeError, ActiveRecord::RecordNotFound
     nil
+  end
+
+  def invalidate_all_tokens!
+    increment!(:token_version)
+  end
+
+  def refresh_token!
+    invalidate_all_tokens!
+    generate_jwt_token
   end
 
   def active_for_authentication?
