@@ -12,10 +12,41 @@ class User < ApplicationRecord
 
   enum role: { employee: 'employee', admin: 'admin' }
 
-  scope :active, -> { where(active: true) }
-  scope :inactive, -> { where(active: false) }
-  scope :admins, -> { where(role: 'admin') }
-  scope :employees, -> { where(role: 'employee') }
+  def self.search_by_name(name)
+    UserQuery.new.search_by_name(name).to_relation
+  end
+
+  def self.search_by_email(email)
+    UserQuery.new.search_by_email(email).to_relation
+  end
+
+  def self.search_by_role(role)
+    UserQuery.new.search_by_role(role).to_relation
+  end
+
+  def self.search_by_active(active)
+    UserQuery.new.search_by_active(active).to_relation
+  end
+
+  def self.search(query)
+    UserQuery.new.search_global(query).to_relation
+  end
+
+  def self.order_by_name(direction = 'asc')
+    Users::SortStrategy.new(UserQuery.new, { sort_by: 'name', order: direction }).execute.to_relation
+  end
+
+  def self.order_by_email(direction = 'asc')
+    Users::SortStrategy.new(UserQuery.new, { sort_by: 'email', order: direction }).execute.to_relation
+  end
+
+  def self.order_by_role(direction = 'asc')
+    Users::SortStrategy.new(UserQuery.new, { sort_by: 'role', order: direction }).execute.to_relation
+  end
+
+  def self.order_by_created_at(direction = 'desc')
+    Users::SortStrategy.new(UserQuery.new, { sort_by: 'created_at', order: direction }).execute.to_relation
+  end
 
   def active?
     active == true
@@ -37,10 +68,8 @@ class User < ApplicationRecord
     payload = {
       user_id: id,
       email: email,
-      name: name,
       role: role,
-      token_version: token_version,
-      exp: 24.hours.from_now.to_i
+      token_version: token_version
     }
     JWT.encode(payload, Rails.application.credentials.secret_key_base)
   end
