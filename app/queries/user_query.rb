@@ -20,12 +20,10 @@ class UserQuery
   def search_by_role(role)
     return self unless role.present?
 
-    UserQuery.new(relation.where(role: role))
+    UserQuery.new(relation.where(role: role).where.not(active: false))
   end
 
   def search_by_active(active)
-    return self unless active.present?
-
     UserQuery.new(relation.where(active: normalize_boolean(active)))
   end
 
