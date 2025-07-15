@@ -1,18 +1,16 @@
 module AuthenticationHelper
-  def login_as(user)
-    token = user.generate_jwt_token
-    request.headers['Authorization'] = "Bearer #{token}"
+  def auth_token_for(user)
+    user.reload if user.persisted?
+    user.generate_jwt_token
   end
 
   def login_user(attributes = {})
     user = create(:user, attributes)
-    login_as(user)
     user
   end
 
   def login_admin(attributes = {})
     user = create(:admin_user, attributes)
-    login_as(user)
     user
   end
 

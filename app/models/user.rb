@@ -69,7 +69,8 @@ class User < ApplicationRecord
       user_id: id,
       email: email,
       role: role,
-      token_version: token_version
+      token_version: token_version,
+      exp: 1.hour.from_now.to_i
     }
     JWT.encode(payload, Rails.application.credentials.secret_key_base)
   end
