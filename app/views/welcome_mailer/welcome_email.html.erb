@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+      border-radius: 10px 10px 0 0;
+    }
+    .content {
+      background: #f9f9f9;
+      padding: 30px;
+      border-radius: 0 0 10px 10px;
+    }
+    .button {
+      display: inline-block;
+      background: #667eea;
+      color: white;
+      padding: 12px 24px;
+      text-decoration: none;
+      border-radius: 5px;
+      margin: 20px 0;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 30px;
+      color: #666;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🎉 Bem-vindo ao Internal Messenger!</h1>
+  </div>
+  
+  <div class="content">
+    <h2>Olá, <%= @user.name %>!</h2>
+    
+    <p>Estamos muito felizes em tê-lo conosco no Internal Messenger!</p>
+    
+    <p>Com nossa plataforma, você poderá:</p>
+    <ul>
+      <li>Comunicar-se com colegas de forma eficiente</li>
+      <li>Organizar conversas por projetos e equipes</li>
+      <li>Compartilhar arquivos e informações importantes</li>
+      <li>Manter-se conectado com sua equipe</li>
+    </ul>
+    
+    <p>Para começar a usar o Internal Messenger, acesse nossa plataforma:</p>
+    
+    <div style="text-align: center;">
+      <a href="<%= @welcome_url %>" class="button">Acessar Internal Messenger</a>
+    </div>
+    
+    <p>Se você tiver alguma dúvida ou precisar de ajuda, não hesite em entrar em contato conosco.</p>
+    
+    <p>Atenciosamente,<br>
+    <strong>Equipe Internal Messenger</strong></p>
+  </div>
+  
+  <div class="footer">
+    <p>Este e-mail foi enviado para <%= @user.email %></p>
+    <p>© <%= Date.current.year %> Internal Messenger. Todos os direitos reservados.</p>
+  </div>
+</body>
+</html> 

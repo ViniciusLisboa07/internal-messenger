@@ -20,7 +20,4 @@ Rails.application.routes.draw do
       end
     end
   end
-
-  # Defines the root path route ("/")
-  # root "posts#index"
 end

@@ -1,0 +1,13 @@
+:concurrency: 5
+:queues:
+  - default
+  - mailers
+  - critical
+
+:pidfile: tmp/pids/sidekiq.pid
+:logfile: log/sidekiq.log
+
+# Redis configuration for Docker
+:redis:
+  :url: redis://redis:6379/0
+  :namespace: internal_messenger_development 

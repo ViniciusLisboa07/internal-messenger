@@ -3,6 +3,8 @@ class Api::V1::RegistrationsController < ApplicationController
     user = User.new(user_params)
     
     if user.save
+      WelcomeEmailJob.perform_later(user.id)
+      
       token = user.generate_jwt_token
       render_created(
         {
