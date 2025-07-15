@@ -53,7 +53,7 @@ group :development, :test do
   gem "factory_bot_rails"
   
   # Additional testing gems
-  gem "shoulda-matchers", "~> 5.0"
+  gem "shoulda-matchers", "~> 6.5"
   gem "faker"
   gem "database_cleaner-active_record"
 end
