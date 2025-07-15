@@ -2,6 +2,9 @@
 require 'spec_helper'
 ENV['RAILS_ENV'] ||= 'test'
 require_relative '../config/environment'
+
+# Require database_cleaner
+require 'database_cleaner/active_record'
 # Prevent database truncation if the environment is production
 abort("The Rails environment is running in production mode!") if Rails.env.production?
 require 'rspec/rails'
@@ -70,8 +73,33 @@ RSpec.configure do |config|
   config.include AuthenticationHelper, type: :request
   config.include AuthenticationHelper, type: :controller
 
-  # Use transactional fixtures for faster tests
-  config.use_transactional_fixtures = true
+  # Force localhost host for request specs
+  config.before(:each, type: :request) do
+    host! "localhost"
+  end
+
+  # Configure database cleaner for different spec types
+  config.use_transactional_fixtures = false
+
+  config.before(:suite) do
+    DatabaseCleaner.clean_with(:truncation)
+    DatabaseCleaner.strategy = :transaction
+  end
+
+  config.around(:each) do |example|
+    DatabaseCleaner.cleaning do
+      example.run
+    end
+  end
+
+  # Use truncation for request specs to ensure data persistence
+  config.before(:each, type: :request) do
+    DatabaseCleaner.strategy = :truncation
+  end
+
+  config.after(:each, type: :request) do
+    DatabaseCleaner.strategy = :transaction
+  end
 
   # Ensure all support files are loaded
   Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
