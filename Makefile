@@ -5,7 +5,7 @@ run:
 	docker-compose up
 
 test:
-	docker-compose run web rspec
+	docker-compose run web bundle exec rspec
 
 bash:
 	docker-compose run web bash
